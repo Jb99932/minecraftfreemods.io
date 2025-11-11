@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signup with Flag Dropdown</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  width: 350px;
+}
+h2 { text-align: center; margin-bottom: 20px; }
+.form-group { margin-bottom: 12px; }
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+button:hover { background: #0056b3; }
+.phone-group { display: flex; gap: 8px; margin-bottom: 12px; }
+.country-select {
+  position: relative;
+  width: 40%;
+}
+.country-select input {
+  width: 100%;
+  cursor: pointer;
+}
+.country-options {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  display: none;
+  z-index: 10;
+}
+.country-options div {
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.country-options div:hover {
+  background: #f0f0f0;
+}
+.country-options img {
+  width: 20px;
+  height: 14px;
+  margin-right: 8px;
+}
+.message { text-align: center; margin-top: 10px; font-size: 14px; }
+.error { color: red; }
+.success { color: green; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Sign Up</h2>
+  <div class="form-group">
+    <input type="text" id="signupFirstName" placeholder="First Name">
+  </div>
+  <div class="form-group">
+    <input type="text" id="signupLastName" placeholder="Last Name">
+  </div>
+  <div class="form-group">
+    <input type="email" id="signupEmail" placeholder="Email">
+  </div>
+
+  <div class="phone-group">
+    <div class="country-select">
+      <input type="text" id="countryInput" readonly placeholder="Country">
+      <div class="country-options" id="countryOptions">
+        <div data-code="+1"><img src="https://flagcdn.com/us.svg" alt="">USA (+1)</div>
+        <div data-code="+44"><img src="https://flagcdn.com/gb.svg" alt="">UK (+44)</div>
+        <div data-code="+91"><img src="https://flagcdn.com/in.svg" alt="">India (+91)</div>
+        <div data-code="+880"><img src="https://flagcdn.com/bd.svg" alt="">Bangladesh (+880)</div>
+        <div data-code="+61"><img src="https://flagcdn.com/au.svg" alt="">Australia (+61)</div>
+      </div>
+    </div>
+    <input type="tel" id="signupPhone" placeholder="Phone Number">
+  </div>
+
+  <div class="form-group">
+    <input type="password" id="signupPassword" placeholder="Password">
+  </div>
+  <button onclick="signup()">Sign Up</button>
+  <div id="signupMessage" class="message"></div>
+</div>
+
+<script>
+// Dropdown functionality
+const countryInput = document.getElementById('countryInput');
+const countryOptions = document.getElementById('countryOptions');
+
+countryInput.addEventListener('click', () => {
+  countryOptions.style.display = countryOptions.style.display === 'block' ? 'none' : 'block';
+});
+
+countryOptions.querySelectorAll('div').forEach(option => {
+  option.addEventListener('click', () => {
+    countryInput.value = option.textContent;
+    countryInput.dataset.code = option.dataset.code;
+    countryOptions.style.display = 'none';
+  });
+});
+
+// Signup logic
+function signup() {
+  const firstName = document.getElementById('signupFirstName').value.trim();
+  const lastName = document.getElementById('signupLastName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const countryCode = countryInput.dataset.code;
+  const phone = document.getElementById('signupPhone').value.trim();
+  const password = document.getElementById('signupPassword').value.trim();
+  const msg = document.getElementById('signupMessage');
+
+  if (!firstName || !lastName || !email || !countryCode || !phone || !password) {
+    msg.textContent = 'Please fill all fields.';
+    msg.className = 'message error';
+    return;
+  }
+
+  const fullPhone = countryCode + phone;
+  if (localStorage.getItem(email)) {
+    msg.textContent = 'Account already exists.';
+    msg.className = 'message error';
+    return;
+  }
+
+  const user = { firstName, lastName, email, phone: fullPhone, password };
+  localStorage.setItem(email, JSON.stringify(user));
+  msg.textContent = 'Account created successfully!';
+  msg.className = 'message success';
+}
+</script>
+
+</body>
+</html>
+
+
